@@ -4,39 +4,43 @@ E-commerce companies lose millions due to overselling (selling out-of-stock item
 
 ## Project Structure
 ```
-|-> E-commerce-Automation-DQC/
-|--> dags/
-|---> dag_etl_fakestore.py
-|
-|--> include/
-|---> dbt
-|----> models/
-|-----> staging/
-|-----> core/
-|-----> marts/
-|----> seeds/
-|----> macros/
-|----> profiles/
-|-----> profiles.yml
-|---> soda/
-|----> warehouse.yml
-|----> checks/
-|-----> staging_orders.yml
-|-----> core_fact_orders.yml
-|-----> marts_finance.yml
-|
-|--> logs/
-|--> plugins/
-|
-|--> asset/
-|---> DE-DQC-Architecture.png
-|
-|--> requirements.txt
-|--> .env
-|--> Dockerfile
-|--> docker-compose.yml
-|--> .gitignore
-|--> .dockerignore
+ecommerce-dq-platform/
+├─ airflow/
+│  ├─ dags/
+│  │  ├─ dag_seed_oltp.py
+│  │  ├─ dag_extract_staging.py
+│  │  ├─ dag_transform_core.py
+│  │  ├─ dag_build_marts.py
+│  │  └─ dag_refresh_metabase.py
+├─ include/
+│  ├─ soda/
+│  │  ├─ warehouse.yml
+│  │  ├─ models/
+│  │  │  ├─ checks_staging.yml
+│  │  │  ├─ checks_core.yml
+│  │  │  └─ checks_marts.yml
+│  │  │
+│  ├─ dbt/
+│  │  ├─ models/
+│  │  │  ├─ staging/
+│  │  │  ├─ core/
+│  │  │  └─ marts/
+│  │  ├─ seeds/
+│  │  ├─ macros/
+│  │  ├─ snapshots/
+│  │  ├─ dbt_project.yml
+│  │  └─ profiles.yaml
+├─ scripts/
+│  └─ seed_ecommerce_data.py
+├─ dashboards/
+│  └─ metabase_export.json
+├─ .gitignore
+├─ .dockerignore
+├─ .env
+├─ requirements.txt
+├─ Dockerfile
+├─ docker-compose.yml
+└─ README.md
 ```
 
 ## Data pipeline architecture (On-premise)
