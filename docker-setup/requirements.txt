@@ -1,13 +1,30 @@
+# Airflow providers
 apache-airflow-providers-postgres
 apache-airflow-providers-redis
 apache-airflow-providers-fab
-boto3
+apache-airflow-providers-common-sql
+
+# Airflow 3.x api-server deps
 connexion[flask]==2.14.2
 flask-appbuilder>=4.5,<5
 Flask-Session>=0.5,<1
-requests
-redis
+
+# Data generation
+Faker==25.0.0
+faker-commerce==1.0.3
+
+# dbt (CLI inside Airflow & the dbt-soda)
+dbt-core
+dbt-postgres
+
+# Soda Core (CLI)
+soda-core
+soda-core-postgres
+
+# CLI / utils
+python-dotenv
 pandas
+requests
 psycopg2-binary
-pytest
-pytest-mock
+redis
+prometheus-client
