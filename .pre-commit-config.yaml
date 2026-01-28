@@ -1,0 +1,25 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 24.3.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+
+  - repo: https://github.com/sqlfluff/sqlfluff
+    rev: 3.0.7
+    hooks:
+      - id: sqlfluff-lint
+      - id: sqlfluff-fix
+
+  - repo: local
+    hooks:
+      - id: dbt-compile-check
+        name: dbt compile check
+        entry: bash -c "cd dbt_project && dbt compile"
+        language: system
+        pass_filenames: false

@@ -2,9 +2,10 @@ x-airflow-env: &airflow_env
   AIRFLOW__CORE__EXECUTOR: CeleryExecutor
   AIRFLOW__CORE__LOAD_EXAMPLES: "false"
   AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
-  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+  AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
   AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
-  AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
+  AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres:5432/airflow
   AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
   AIRFLOW__LOGGING__LOGGING_LEVEL: "INFO"
 
@@ -87,13 +88,14 @@ services:
           --email "$_AIRFLOW_WWW_USER_EMAIL" || true
       '
     volumes:
-      - ./dags:/opt/airflow/dags
+      - ./airflow/dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./airflow/scripts:/opt/airflow/scripts
       - ./include:/opt/airflow/include
       - ./include/dbt:/opt/airflow/include/dbt
       - ./include/soda:/opt/airflow/include/soda
-      - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
-      - ./.env:/opt/airflow/.env:ro
+      - ./.env:/opt/airflow/.env
 
   airflow-api:
     build: .
@@ -114,13 +116,14 @@ services:
       retries: 5
     restart: always
     volumes:
-      - ./dags:/opt/airflow/dags
+      - ./airflow/dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./airflow/scripts:/opt/airflow/scripts
       - ./include:/opt/airflow/include
       - ./include/dbt:/opt/airflow/include/dbt
       - ./include/soda:/opt/airflow/include/soda
-      - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
-      - ./.env:/opt/airflow/.env:ro
+      - ./.env:/opt/airflow/.env
   
   airflow-scheduler:
     build: .
@@ -133,13 +136,14 @@ services:
       AIRFLOW_UID: "${AIRFLOW_UID}"
     command: scheduler
     volumes:
-      - ./dags:/opt/airflow/dags
+      - ./airflow/dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./airflow/scripts:/opt/airflow/scripts
       - ./include:/opt/airflow/include
       - ./include/dbt:/opt/airflow/include/dbt
       - ./include/soda:/opt/airflow/include/soda
-      - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
-      - ./.env:/opt/airflow/.env:ro
+      - ./.env:/opt/airflow/.env
 
   airflow-worker:
     build: .
@@ -150,15 +154,21 @@ services:
     environment:
       <<: *airflow_env
       AIRFLOW_UID: "${AIRFLOW_UID}"
+      PGHOST: postgres-dbt
+      PGPORT: 5432
+      PGDATABASE: analytics
+      PGUSER: ${PGUSER}
+      PGPASSWORD: ${PGPASSWORD}
     command: celery worker
     volumes:
-      - ./dags:/opt/airflow/dags
+      - ./airflow/dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./airflow/scripts:/opt/airflow/scripts
       - ./include:/opt/airflow/include
       - ./include/dbt:/opt/airflow/include/dbt
       - ./include/soda:/opt/airflow/include/soda
-      - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
-      - ./.env:/opt/airflow/.env:ro
+      - ./.env:/opt/airflow/.env
 
   flower:
     build: .
@@ -173,13 +183,14 @@ services:
     ports:
       - "5555:5555"
     volumes:
-      - ./dags:/opt/airflow/dags
+      - ./airflow/dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./airflow/scripts:/opt/airflow/scripts
       - ./include:/opt/airflow/include
       - ./include/dbt:/opt/airflow/include/dbt
       - ./include/soda:/opt/airflow/include/soda
-      - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
-      - ./.env:/opt/airflow/.env:ro
+      - ./.env:/opt/airflow/.env
 
   # Utility container for interactive dbt & Soda CLI runs
   dbt-soda:
