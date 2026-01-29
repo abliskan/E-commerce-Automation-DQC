@@ -4,7 +4,30 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "apache-airflow-providers-common-sql",
+    "apache-airflow-providers-fab",
+    "apache-airflow-providers-http",
+    "apache-airflow-providers-postgres",
+    "apache-airflow-providers-redis",
+    "apache-airflow-providers-slack",
+    "dbt-core",
+    "dbt-postgres",
+    "faker",
+    "gunicorn",
+    "numpy",
+    "pandas",
+    "pre-commit>=4.5.1",
+    "psycopg2-binary",
+    "pyarrow",
+    "python-dotenv",
+    "requests",
+    "scipy",
+    "slack-sdk",
+    "soda-core",
+    "soda-core-postgres",
+    "sqlfluff-templater-dbt",
+]
 
 [dependency-groups]
 dev = [

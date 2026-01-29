@@ -1,0 +1,16 @@
+# checks for staging.product_variants
+checks for staging.product_variants:
+  - row_count > 0
+  - missing_count(variant_id) = 0
+  - missing_count(product_id) = 0
+  - invalid_count(product_id <= 0) = 0
+  - missing_count(sku) = 0
+  - missing_count(barcode) = 0
+
+  # Price / cost sanity (we expect integers in Bronze)
+  - missing_count(price) = 0
+  - min(price) >= 0
+  - max(price) < 1000000
+  - missing_count(cost) = 0
+  - min(cost) >= 0
+  - max(cost) < 1000000

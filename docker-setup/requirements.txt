@@ -2,7 +2,11 @@
 apache-airflow-providers-postgres
 apache-airflow-providers-redis
 apache-airflow-providers-fab
+apache-airflow-providers-http
+apache-airflow-providers-slack
+apache-airflow-providers-docker
 apache-airflow-providers-common-sql
+pendulum
 
 # Airflow 3.x api-server deps
 connexion[flask]==2.14.2
@@ -16,15 +20,33 @@ faker-commerce==1.0.3
 # dbt (CLI inside Airflow & the dbt-soda)
 dbt-core
 dbt-postgres
+dbt-utils
+sqlfluff-templater-dbt
 
 # Soda Core (CLI)
 soda-core
 soda-core-postgres
 
-# CLI / utils
-python-dotenv
+# Slack alert/logging
+slack-sdk
+
+# Docker operator
+gunicorn
+
+# CLI / utils - Data Engineering
+numpy
 pandas
-requests
+python-dotenv
 psycopg2-binary
+requests
 redis
+SQLAlchemy
+
+# CLI / utils - Dev tools
+black
+isort
+mypy
+pytest
+pre-commit
 prometheus-client
+ruff

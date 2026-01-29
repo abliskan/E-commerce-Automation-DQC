@@ -1,0 +1,9 @@
+# checks for staging.products
+checks for staging.products:
+  - row_count > 0
+  - missing_count(title) = 0
+  - invalid_count(length(title) < 1) = 0
+  - missing_count(category) = 0
+  - invalid_count(category not in ('Electronics','Accessories','Audio','Storage')) = 0
+  - missing_count(brand) = 0
+  - min(product_id) > 0

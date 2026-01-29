@@ -1,0 +1,76 @@
+checks for stg_customers:
+  - row_count > 0
+  - missing_count(email) = 0
+  - missing_count(customer_id) = 0
+  - duplicate_count(customer_id) < 5000
+  - invalid_percent(country) = 0:
+      valid values: [SG, MY, ID, TH]
+  - freshness(created_at) < 1000d
+  # - freshness(created_at) < 24h
+
+checks for stg_orders:
+  - row_count > 0
+  - missing_count(order_id) = 0
+  - duplicate_count(order_id) < 5000
+  - missing_percent(customer_id) = 0
+  - invalid_percent(status) = 0:
+      valid values: [paid, pending, cancelled]
+  - invalid_percent(currency) < 1%:
+      valid values: [SGD, MYR, IDR, THB]
+  - min(total_amount) >= 0
+  - freshness(order_at) < 1000d
+  # - freshness(order_at) < 24h
+
+checks for stg_products:
+  - row_count > 0
+  - missing_count(product_id) = 0
+  - missing_count(title) = 0
+  - missing_count(category) = 0
+  - duplicate_count(product_id) < 5000
+  - freshness(created_at) < 1000d
+  # - freshness(created_at) < 24h
+
+checks for stg_product_variants:
+  - row_count > 0
+  - missing_count(variant_id) = 0
+  - missing_count(product_id) = 0
+  - duplicate_count(variant_id) < 5000
+  - min(price) >= 0
+  - min(cost) >= 0
+
+checks for stg_order_items:
+  - row_count > 0
+  - missing_count(order_item_id) = 0
+  - missing_count(order_id) = 0
+  - missing_count(product_id) < 5%
+  - duplicate_count(order_item_id) < 5000
+  - min(quantity) > 0
+  - min(unit_price) > 0
+  - min(total_price) >= 0
+
+checks for stg_payments:
+  - row_count > 0
+  - missing_count(payment_id) = 0
+  - missing_count(order_id) = 0
+  - missing_count(payment_method) < 5%
+  - duplicate_count(payment_id) < 5000
+  - invalid_percent(payment_method) < 1%:
+      valid values: [CreditCard, EWallet, PayNow, PayLater]
+  - invalid_percent(status) = 0:
+      valid values: [paid, pending, failed, refunded]
+  - min(amount) >= 0
+  - freshness(paid_at) < 1000d
+  # - freshness(paid_at) < 24h
+
+checks for stg_shipments:
+  - row_count > 0
+  - missing_count(shipment_id) = 0
+  - missing_count(order_id) = 0
+  - missing_count(shipped_at) < 10%
+  - duplicate_count(shipment_id) < 5000
+  - invalid_percent(service) = 0:
+      valid values: [Standard, Express]
+  - invalid_percent(status) = 0:
+      valid values: [processing, shipped]
+  - freshness(shipped_at) < 1000d
+  # - freshness(shipped_at) < 24h

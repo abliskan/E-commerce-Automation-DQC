@@ -1,0 +1,21 @@
+Ecommerce_dbt_DQC:
+  outputs:
+    dev:
+      dbname: analytics
+      host: pg13-dbt
+      pass: dbt_password
+      port: 5432
+      schema: bronze
+      threads: 1
+      type: postgres
+      user: dbt_user
+    prod:
+      dbname: analytics
+      host: pg13-dbt
+      pass: dbt_password
+      port: 5432
+      schema: bronze
+      threads: 1
+      type: postgres
+      user: dbt_user
+  target: dev

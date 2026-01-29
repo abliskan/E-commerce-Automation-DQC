@@ -1,0 +1,12 @@
+# checks for staging.payments
+checks for staging.payments:
+  - row_count > 0
+  - missing_count(payment_id) = 0
+  - unique_count(payment_id) = 0
+  - missing_count(order_id) = 0
+  - missing_count(amount) = 0
+  - min(amount) >= 0
+  - max(amount) < 100000000
+  - invalid_count(status not in ('paid','pending','failed', 'paylater')) = 0
+  - missing_count(paid_at) = 0
+  - freshness(timestamp_column=paid_at, max_age=1000d)

@@ -1,0 +1,58 @@
+checks for dim_customers:
+  - row_count > 0
+  - missing_count(customer_sk) = 0
+  - duplicate_count(customer_sk) = 0
+  - missing_count(customer_id) = 0
+
+checks for dim_products:
+  - row_count > 0
+  - missing_count(product_sk) = 0
+  - duplicate_count(product_sk) = 0
+  - missing_count(product_id) = 0
+  - missing_count(title) = 0
+  - missing_count(category) = 0
+
+checks for dim_product_variants:
+  - row_count > 0
+  - missing_count(variant_sk) = 0
+  - duplicate_count(variant_sk) = 0
+  - missing_count(product_sk) = 0
+  - missing_count(variant_id) = 0
+
+checks for fct_orders:
+  - row_count > 0
+  - missing_count(order_key) = 0
+  - duplicate_count(order_key) = 0
+  - missing_count(customer_key) = 0
+  - missing_count(date_key) = 0
+  - missing_count(order_amount) = 0
+  - min(order_amount) >= 0
+  - freshness(order_date) < 1000d
+
+checks for fct_order_items:
+  - row_count > 0
+  - missing_count(order_item_key) = 0
+  - duplicate_count(order_item_key) = 0
+  - missing_count(order_key) = 0
+  - missing_count(product_key) = 0
+  - missing_count(variant_key) = 0
+  - min(quantity) >= 1
+  - min(unit_price) >= 0
+  - freshness(order_date) < 1000d
+
+checks for fct_payments:
+  - row_count > 0
+  - missing_count(payment_key) = 0
+  - duplicate_count(payment_key) = 0
+  - missing_count(order_id) = 0
+  - missing_count(amount) = 0
+  - min(amount) >= 0
+  - freshness(paid_date) < 1000d
+
+checks for fct_shipments:
+  - row_count > 0
+  - missing_count(shipment_key) = 0
+  - duplicate_count(shipment_key) = 0
+  - missing_count(order_id) = 0
+  - missing_count(status) = 0
+  - freshness(ship_date) < 1000d
