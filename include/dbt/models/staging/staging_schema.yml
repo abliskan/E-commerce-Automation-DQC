@@ -1,0 +1,279 @@
+version: 2
+
+sources:
+  - name: raw_staging
+    schema: bronze
+    tables:
+      - name: customers_raw
+        description: "Landing customers table from OLTP"
+      - name: orders_raw
+        description: "Landing orders table from OLTP"
+      - name: products_raw
+        description: "Landing products table from OLTP"
+      - name: product_variants_raw
+        description: "Landing product_variants table from OLTP"
+      - name: order_items_raw
+        description: "Landing order_items table from OLTP"
+      - name: payments_raw
+        description: "Landing payments table from OLTP"
+      - name: shipments_raw
+        description: "Landing shipments table from OLTP"
+
+models:
+  - name: stg_customers
+    description: "Staging model for customers cleaned from bronze layer"
+    config:
+      tags: ['staging']
+    columns:
+      - name: customer_id
+        description: "Primary key for customer"
+        tests: [not_null]
+
+      - name: email
+        description: "Customer email address"
+        tests: [not_null]
+
+      - name: name
+        description: "Customer full name"
+        tests: [not_null]
+
+      - name: country
+        description: "Customer country"
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["ID","MY","TH","SG"]
+
+      - name: created_at
+        description: "Customer creation timestamp"
+        tests: [not_null]
+
+      - name: status
+        description: "Customer account status"
+        tests: [not_null]
+
+      - name: load_ts
+        description: "Insert into db timestamp"
+        tests: [not_null]  
+
+  - name: stg_orders
+    description: "Staging model that casts and normalizes orders"
+    config:
+      tags: ['staging']
+    columns:
+      - name: order_id
+        description: "Primary key for order"
+        tests: [not_null]
+
+      - name: customer_id
+        description: "Customer foreign key"
+        tests: [not_null]
+
+      - name: channel_id
+        description: "Order channel acc id"
+        tests: [not_null]
+
+      - name: order_at
+        description: "Order timestamp"
+        tests: [not_null]
+
+      - name: status
+        description: "Order status"
+        tests: [not_null]
+
+      - name: currency
+        description: "Order currency"
+        tests: [not_null]
+
+      - name: total_amount
+        description: "Total order amount"
+        tests: [not_null]
+
+      - name: load_ts
+        description: "Insert into db timestamp"
+        tests: [not_null]
+  
+  - name: stg_products
+    description: "Staging model that casts and normalizes products"
+    config:
+      tags: ['staging']
+    columns:
+      - name: product_id
+        description: "Primary key for products"
+        tests: [not_null]
+
+      - name: title
+        description: "Title for products"
+        tests: [not_null]
+
+      - name: category
+        description: "Category for products"
+        tests: [not_null]
+
+      - name: brand
+        description: "Brand name for products"
+        tests: [not_null]
+
+      - name: active
+        description: "Boolean Value on active attr"
+        tests: [not_null]
+
+      - name: created_at
+        description: "Product creation timestamp"
+        tests: [not_null]
+
+      - name: load_ts
+        description: "Insert into db timestamp"
+        tests: [not_null]
+
+  - name: stg_product_variants
+    description: "Staging model that casts and normalizes product variants"
+    config:
+      tags: ['staging']
+    columns:
+      - name: variant_id
+        description: "Primary key for product_variants"
+        tests: [not_null]
+
+      - name: product_id
+        description: "Product foreign key"
+        tests: [not_null]
+
+      - name: sku
+        description: "Sku for product_variants"
+        tests: [not_null]
+
+      - name: barcode
+        description: "Barcode for product_variants"
+        tests: [not_null]
+
+      - name: price
+        description: "Price for product_variants"
+        tests: [not_null]
+
+      - name: cost
+        description: "Cost for product_variants"
+        tests: [not_null]
+
+      - name: active
+        description: "Active product_variants"
+        tests: [not_null]
+
+      - name: load_ts
+        description: "Insert into db timestamp"
+        tests: [not_null]
+
+  - name: stg_order_items
+    description: "Staging model that casts and normalizes order items"
+    config:
+      tags: ['staging']
+    columns:
+      - name: order_item_id
+        description: "Primary key for order_items"
+        tests: [not_null]
+
+      - name: order_id
+        description: "Order foreign key"
+        tests: [not_null]
+
+      - name: product_id
+        description: "Product foreign key"
+        tests: [not_null]
+
+      - name: variant_id
+        description: "Product variant foreign key"
+        tests: [not_null]
+
+      - name: quantity
+        description: "Quantity for order_items"
+        tests: [not_null]
+
+      - name: unit_price
+        description: "Price for unit on order_items"
+        tests: [not_null]
+
+      - name: discount
+        description: "Product foreign key"
+        tests: [not_null]
+
+      - name: tax
+        description: "Quantity for order_items"
+        tests: [not_null]
+
+      - name: total_price
+        description: "Total price for order_items"
+        tests: [not_null]
+
+      - name: created_at
+        description: "Order_items creation timestamp"
+        tests: [not_null]
+
+      - name: load_ts
+        description: "Insert into db timestamp"
+        tests: [not_null]
+
+  - name: stg_payments
+    description: "Staging model that casts and normalizes payments"
+    config:
+      tags: ['staging']
+    columns:
+      - name: payment_id
+        description: "Primary key for payments"
+        tests: [not_null]
+
+      - name: order_id
+        description: "Order foreign key"
+        tests: [not_null]
+
+      - name: payment_method
+        description: "Payment method for payments"
+        tests: [not_null]
+
+      - name: amount
+        description: "Amount for payments"
+        tests: [not_null]
+
+      - name: status
+        description: "Status for payments"
+        tests: [not_null]
+
+      - name: paid_at
+        description: "Payment creation timestamp"
+        tests: [not_null]
+
+      - name: load_ts
+        description: "Insert into db timestamp"
+        tests: [not_null]
+
+  - name: stg_shipments
+    description: "Staging model that casts and normalizes shipments"
+    config:
+      tags: ['staging']
+    columns:
+      - name: shipment_id
+        description: "Primary key for shipments"
+        tests: [not_null]
+
+      - name: order_id
+        description: "Order foreign key"
+        tests: [not_null]
+
+      - name: carrier
+        description: "Carrier for shipments"
+        tests: [not_null]
+
+      - name: service
+        description: "Service for shipments"
+        tests: [not_null]
+
+      - name: tracking_number
+        description: "Tracking_number for shipments"
+        tests: [not_null]
+
+      - name: shipped_at
+        description: "Shipped creation timestamp"
+        tests: [not_null]
+
+      - name: load_ts
+        description: "Insert into db timestamp"
+        tests: [not_null]

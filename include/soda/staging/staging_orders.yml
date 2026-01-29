@@ -1,0 +1,19 @@
+# soda/checks/staging_orders.yml
+checks for stg_orders:
+  # Structural checks (FAIL)
+  - row_count > 0
+  - missing_count(order_id) = 0
+  - missing_count(customer_id) = 0
+  - invalid_count(status not in ('paid','pending','cancelled')) = 0
+  - invalid_count(currency not in ('SGD','MYR','IDR','THB')) = 0
+
+  # timestamps and freshness
+  - missing_count(order_at) = 0
+  - freshness(timestamp_column=order_at, max_age=1000d)
+
+  # monetary sanity (integers)
+  - min(total_amount) >= 0
+  - max(total_amount) < 100000000
+
+  # distribution sanity
+  - avg(total_amount) > 0

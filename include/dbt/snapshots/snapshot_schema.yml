@@ -1,0 +1,11 @@
+version: 2
+models:
+  - name: products_snapshot
+    description: "SCD2 snapshot tracking product attribute changes over time."
+    columns:
+      - name: product_id
+        tests: [not_null]
+      - name: dbt_valid_from
+        description: "Start timestamp for this version of the product."
+      - name: dbt_valid_to
+        description: "End timestamp for this version (null = current row)."

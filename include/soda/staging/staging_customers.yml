@@ -1,0 +1,24 @@
+# soda/checks/staging_customers.yml
+checks for stg_customers:
+  # Structural / must-have checks (FAIL if violated)
+  - row_count > 0
+
+  # Primary key presence/uniqueness
+  - missing_count(customer_id) = 0
+
+  # Email quality
+  - missing_count(email) = 0
+  - invalid_count(email not like '^[^@]+@[^@]+\.[^@]+$') = 0
+
+  # Domain constraints
+  - invalid_count(country not in ('SG','MY','ID','TH')) = 0
+
+  # Timestamps & freshness
+  - freshness(timestamp_column=created_at, max_age=1000d)
+
+  - missing_count(name) = 0
+  - invalid_count(length(name) < 2) = 0
+
+  # Sanity distributions
+  - min(customer_id) > 0
+  - avg(length(name)) > 2

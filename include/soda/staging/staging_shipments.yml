@@ -1,0 +1,9 @@
+# checks for staging.shipments
+checks for staging.shipments:
+  - row_count > 0
+  - missing_count(shipment_id) = 0
+  - missing_count(order_id) = 0
+  - missing_count(tracking_number) = 0
+  - invalid_count(status not in ('processing','shipped','delivered')) = 0
+  - missing_count(shipped_at) = 0
+  - freshness(timestamp_column=shipped_at, max_age=1000d)
