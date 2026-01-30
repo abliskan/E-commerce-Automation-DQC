@@ -2,12 +2,16 @@ x-airflow-env: &airflow_env
   AIRFLOW__CORE__EXECUTOR: CeleryExecutor
   AIRFLOW__CORE__LOAD_EXAMPLES: "false"
   AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
-  AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
+  AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${AF_META_DB}:${AF_META_USER}@postgres:${AF_META_PORT}/${AF_META_PASSWORD}
+  AIRFLOW__CORE__EXECUTION_API_SERVER_URL: "http://airflow-api:8080/execution/"
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${AF_META_DB}:${AF_META_USER}@postgres:${AF_META_PORT}/${AF_META_PASSWORD}
   AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
-  AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres:5432/airflow
+  AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://${AF_META_DB}:${AF_META_USER}@postgres:${AF_META_PORT}/${AF_META_PASSWORD}
   AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "true"
   AIRFLOW__LOGGING__LOGGING_LEVEL: "INFO"
+  AIRFLOW__API_AUTH__JWT_SECRET: ${AIRFLOW__API_AUTH__JWT_SECRET}
+  AIRFLOW__EXECUTION_API__JWT_SECRET: ${AIRFLOW__EXECUTION_API__JWT_SECRET}
+  AIRFLOW__WEBSERVER__SECRET_KEY: ${AIRFLOW__WEBSERVER__SECRET_KEY}
 
   # Create the first admin user during init
   _AIRFLOW_WWW_USER_CREATE: ${_AIRFLOW_WWW_USER_CREATE}
