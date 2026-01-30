@@ -1,12 +1,21 @@
-ecom_dbt:
-  target: prod
+Ecommerce_dbt_DQC:
   outputs:
-    prod:
-      type: postgres
-      host: "{{ env_var('PGHOST') }}"
-      port: "{{ env_var('PGPORT') | int }}"
-      user: "{{ env_var('PGUSER') }}"
-      password: "{{ env_var('PGPASSWORD') }}"
+    dev:
       dbname: "{{ env_var('PGDATABASE') }}"
-      schema: core
-      threads: 4
+      host: "{{ env_var('DB_HOST') }}"
+      password: "{{ env_var('PGPASSWORD') }}"
+      port: "{{ env_var('DB_PORT') | int }}"
+      schema: "{{ env_var('PGSCHEMA') }}"
+      threads: 1
+      type: postgres
+      user: "{{ env_var('PGUSER') }}"
+    prod:
+      dbname: "{{ env_var('PGDATABASE') }}"
+      host: "{{ env_var('DB_HOST') }}"
+      password: "{{ env_var('PGPASSWORD') }}"
+      port: "{{ env_var('DB_PORT') | int }}"
+      schema: "{{ env_var('PGSCHEMA') }}"
+      threads: 1
+      type: postgres
+      user: "{{ env_var('PGUSER') }}"
+  target: dev
