@@ -1,0 +1,6 @@
+checks for mart_orders:
+  - row_count > 0
+  - missing_count(order_date) = 0
+  - missing_count(daily_revenue) = 0
+  - min(daily_revenue) >= 0
+  - freshness(order_date) < 7d

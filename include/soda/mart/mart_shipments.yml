@@ -1,0 +1,7 @@
+checks for mart_shipments:
+  - row_count > 0
+  - missing_count(shipment_id) = 0
+  - missing_count(shipped_date) = 0
+  - max(shipping_days) <= 30
+  - min(shipping_days) >= 0
+  - freshness(order_date) < 7d

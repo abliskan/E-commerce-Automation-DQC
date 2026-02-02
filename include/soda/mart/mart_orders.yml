@@ -1,0 +1,8 @@
+checks for mart_orders:
+  - row_count > 0
+  - missing_count(order_id) = 0
+  - missing_count(order_date) = 0
+  - missing_count(order_status) = 0
+  - min(order_revenue) >= 0
+  - min(total_paid_amount) >= 1
+  - freshness(order_date) < 7d

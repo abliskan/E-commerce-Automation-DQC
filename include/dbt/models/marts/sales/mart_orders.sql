@@ -13,8 +13,8 @@ WITH orders as (
        date_key,
        order_date,
        status                                     as order_status,
-	   currency,
-	   order_amount
+	    currency,
+	    order_amount
    FROM {{ ref('fct_orders') }}
 
 ),
@@ -39,103 +39,45 @@ payments as (
    GROUP BY 
        order_id,
        status
-
 ),
 
-shipments as (
-   SELECT
-       order_id,
-       status                                       as shipment_status,
-       ship_date                                    as shipped_date
-   FROM {{ ref('fct_shipments') }}
-   GROUP BY 
-       order_id,
-       status,
-       ship_date
-
+customers as (
+    select
+        customer_sk,
+        customer_id,
+        name                                      as customer_name,
+        country
+    from {{ ref('dim_customers') }}
 )
 
 select
-   ods.order_key,
-   ods.order_id,
-   ods.customer_key,
-   ods.order_date,
-   ods.order_status,
-   ods.currency,
-   ods.order_amount,
-
-   pyt.payment_status,
-   shp.shipment_status,
+    ods.order_key,
+   	ods.order_id,
+   	ods.order_date,
+      ods.order_status,
+   	coalesce(ctr.customer_name, 'Unkown'),           as customer_name
+   	coalesce(ctr.country, 'Unkown'),                 as country
    
-   odi.order_revenue,
-   odi.avg_item_price,
-   pyt.total_paid_amount,
-
-   -- derived business flags
-   case
-       when pyt.total_paid_amount >= odi.order_revenue then true
-       else false
-   end                                             as is_fully_paid,
-
-   case
-       when shp.shipped_date is not null then true
-       else false
-   end                                             as is_shipped
+   	-- metrics
+   	distinct coalesce(odi.total_items, 0)            as unique_item_count, -- For numeric aggregations used in dashboards | Convert NULL → 0
+   	coalesce(odi.order_revenue, 0)                   as order_revenue, -- For numeric aggregations used in dashboards | Convert NULL → 0
+   	CASE 
+   	   WHEN coalesce(odi.total_items, 0) = 0 THEN 0
+   	   ELSE coalesce(odi.order_revenue, 0) / odi.total_items
+   	END AS avg_item_price,
+   	coalesce(pyt.total_paid_amount, 0)               as total_paid_amount,
+   	coalesce(payment_status, 'Unpaid')               as payment_status,
+   	-- derived business flags
+   	CASE 
+   	   WHEN coalesce(pyt.total_paid_amount, 0) = 0 THEN 'Not Paid'
+   	   WHEN pyt.total_paid_amount < coalesce(odi.order_revenue, 0) THEN 'Partial'
+   	   ELSE 'Fully Paid'
+   	END                                  AS payment_flag
 
 FROM orders ods
 left join order_items odi
    on ods.order_id = odi.order_key
 left join payments pyt
    on ods.order_id = pyt.order_id
-left join shipments shp
-   on ods.order_id = shp.order_id;
-
-
-
-
-
-
-
-
-
-
--- {{ config(
---     materialized = 'table',
---     schema='mart_sales',
---     tags=['mart']
--- ) }}
-
--- select
---     fos.order_key,
---     fos.order_id,
---     fos.order_date,
---     fos.status as order_status,
---     fos.currency,
---     fos.order_amount,
-
---     -- customer
---     fos.customer_key,
---     dcs.name as customer_name,
---     dcs.country as customer_country,
-
---     -- metrics
---     count(distinct foi.order_item_key) as item_count,
---     sum(foi.quantity) as total_quantity
-
--- from {{ ref('fct_orders') }} fos
--- join {{ ref('dim_dates') }} dde
---     ON fos.order_date = dde.date_day
--- join {{ ref('dim_customers') }} dcs
---     ON fos.customer_key = dcs.customer_sk
--- left join {{ ref('fct_order_items') }} foi
---     ON fos.order_id = foi.order_key
--- group by
---     fos.order_key,
---     fos.order_id,
---     fos.order_date,
---     fos.status,
---     fos.currency,
---     fos.order_amount,
---     fos.customer_key,
---     dcs.name,
---     dcs.country
+left join customers ctr
+    on ods.customer_key = ctr.customer_sk

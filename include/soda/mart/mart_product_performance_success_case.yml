@@ -1,0 +1,6 @@
+checks for mart_product_performance:
+  - row_count > 0
+  - missing_count(product_key) = 0
+  - min(total_unit_sold) >= 0
+  - min(total_revenue) >= 0
+  - freshness(order_date) < 7d

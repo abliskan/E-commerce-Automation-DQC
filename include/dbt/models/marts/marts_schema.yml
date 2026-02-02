@@ -12,10 +12,6 @@ models:
         tests:
           - not_null
       
-      - name: customer_key
-        tests:
-          - not_null
-
       - name: order_date
         tests:
           - not_null
@@ -24,28 +20,37 @@ models:
         tests:
           - not_null
 
-      - name: currency
+      - name: customer_name
         tests:
           - not_null
 
-      - name: order_amount
+      - name: country
+        tests:
+          - not_null
+
+      - name: unique_item_count
         tests:
           - not_null
       
-      - name: payment_status
-        tests: []
-
-      - name: shipment_status
-        tests: []
-
       - name: order_revenue
-        tests: []
+        tests:
+          - not_null
 
       - name: avg_item_price
-        tests: []
+        tests:
+          - not_null
 
       - name: total_paid_amount
-        tests: []
+        tests:
+          - not_null
+
+      - name: payment_status
+        tests:
+          - not_null
+
+      - name: payment_flag
+        tests:
+          - not_null
 
   - name: mart_daily_revenue
     description: "Daily revenue and KPI mart"
@@ -57,19 +62,31 @@ models:
           - not_null
           - unique
 
-      - name: order_count
+      - name: daily_revenue
         tests:
           - not_null
       
+      - name: total_payments_received
+        tests:
+          - not_null
+      
+      - name: total_orders
+        tests:
+          - not_null
+
       - name: unique_customers
         tests:
           - not_null
 
-      - name: daily_revenue
+      - name: total_items_sold
         tests:
           - not_null
 
       - name: avg_order_value
+        tests:
+          - not_null
+      
+      - name: revenue_per_customer
         tests:
           - not_null
   
@@ -94,6 +111,10 @@ models:
         tests:
           - not_null
 
+      - name: total_items
+        tests:
+          - not_null
+
       - name: lifetime_value
         tests: []
 
@@ -105,12 +126,19 @@ models:
 
       - name: last_order_date
         tests: []
+      
+      - name: days_since_last_order
+        tests: []
 
   - name: mart_product_performance
     description: "Aggregated product KPIs"
     config:
       tags: ['mart']
     columns:
+      - name: product_key
+        tests:
+          - not_null
+
       - name: order_date
         tests:
           - not_null
@@ -127,11 +155,23 @@ models:
         tests:
           - not_null
 
-      - name: total_quantity
+      - name: total_orders
+        tests:
+          - not_null
+
+      - name: total_unit_sold
         tests:
           - not_null
 
       - name: total_revenue
+        tests:
+          - not_null
+
+      - name: avg_selling_price
+        tests:
+          - not_null
+
+      - name: revenue_per_unit
         tests:
           - not_null
 
@@ -144,7 +184,15 @@ models:
         tests:
           - not_null
 
+      - name: shipment_id
+        tests:
+          - not_null
+
       - name: order_id
+        tests:
+          - not_null
+
+      - name: customer_name
         tests:
           - not_null
 
@@ -159,7 +207,15 @@ models:
       - name: shipment_status
         tests:
           - not_null
-
+      
       - name: delivered_date
+        tests:
+          - not_null
+      
+      - name: shipping_days
+        tests:
+          - not_null
+      
+      - name: delivery_status
         tests:
           - not_null

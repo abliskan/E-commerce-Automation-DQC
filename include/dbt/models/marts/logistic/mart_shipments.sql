@@ -10,9 +10,9 @@ WITH shipments as (
         shipment_key,
         shipment_id,
         order_id,
-        ship_date,
+        ship_date     AS delivered_date,
         carrier,
-        status
+        status        AS shipment_status
     from {{ ref('fct_shipments') }}
 
 ),
@@ -31,21 +31,33 @@ customers as (
     select
         customer_sk,
         customer_id,
+        name          AS customer_name,
         country
     from {{ ref('dim_customers') }}
-
 ),
 
 select
     shp.shipment_key,
+    shipment_id,
     shp.order_id,
+    ctr.customer_name,
     ctr.country,
     shp.carrier,
-    shp.status           AS shipment_status,
-    shp.ship_date        AS delivered_date
-    
+    shp.shipment_status,
+    shp.delivered_date,
+    coalesce(
+        DATE_PART('day', shp.delivered_date - ods.order_date),
+        0
+    )   AS shipping_days,
+    CASE
+        WHEN shp.delivered_date IS NULL THEN 'In Transit'
+        WHEN DATE_PART('day', shp.delivered_date - ods.order_date) <= 2 THEN 'Fast'
+        WHEN DATE_PART('day', shp.delivered_date - ods.order_date) <= 5 THEN 'Normal'
+        ELSE 'Delayed'
+    END AS delivery_status
+
 from shipments shp
-join orders ods
+left join orders ods
     on shp.order_id = ods.order_id
-join customers ctr
+left join customers ctr
     on ods.customer_key = ctr.customer_sk

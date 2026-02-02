@@ -1,0 +1,7 @@
+checks for mart_customer_metrics:
+  - row_count > 0
+  - missing_count(customer_sk) = 0
+  - min(total_orders) >= 0
+  - min(lifetime_value) >= 0
+  - min(avg_order_value) >= 0
+  - freshness(order_last_date) < 7d
