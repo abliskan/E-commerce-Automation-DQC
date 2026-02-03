@@ -120,9 +120,6 @@ E-commerce-Automation-DQC/
 └─ README.md
 ```
 
-## Data pipeline architecture (On-premise)
-![Data pipeline](asset/Data-architecture-E-commerce-pipeline.png)
-
 # Technologies Used
 - Python
 - SQL
@@ -154,8 +151,8 @@ RAW ─────────► STAGING
            └──── QUARANTINE → Slack Alert → FAIL DAG       Soda DWH Core Scan
                                                                   ↓
                                                             ┌──── PASS ────────────────────────────────────► Mart
-						                        │                                                 ↓
-						                        │                                                DBT MART Run
+						                                    │                                                 ↓
+						                                    │                                                DBT MART Run
                                                             │                                                 ↓
                                                             │                                                DBT Test MART
                                                             │                                                 ↓
@@ -164,16 +161,16 @@ RAW ─────────► STAGING
                                                                                                        ┌──── PASS ────────────────────────────────────► BI / Dashboard Layer
                                                                                                        │  
                                                                                                        └──── FAIL ────►  ──────────────┐
-														                                    │ Soda Checks  │
-														                                    │  (parallel)  │
-														                                    └──────────────┘
+														                                                                │ Soda Checks  │
+																							                            │  (parallel)  │
+														                                    						    └──────────────┘
                                                                                                                                │
                                                                                                                                └───→ Slack-Alert → FAIL DAG
 ```
 
 # Architecture
 ## Alternative - Local
-![Data Architecture Local](Data-architecture-E-commerce-pipeline.png)
+![Data pipeline](asset/Data-architecture-E-commerce-pipeline.png)
 
 ## Alternative - Cloud
 (coming-soon)
@@ -304,17 +301,13 @@ Connection:
   <img src="asset\mart_analytics-graph-1.png">
 </p>
 
-- Success soda scan
-
-- Fail soda scan
-
 ## Alternative - Cloud
 (Comming Soon)
 
 # Production Deployment Checklist
 
 # Data Visualization
-(Comming Soon)
+(In-progress)
 
 # Future enhancements
 - Real-time streaming ingestion
