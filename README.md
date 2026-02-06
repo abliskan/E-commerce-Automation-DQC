@@ -214,92 +214,169 @@ git clone <repo-url>
 cd project
 ```
 
-2. Install uv
+2. Create a virtual environment
+```bash
+python -m env e-commerce-env
+```
+
+3. Active the virtual environment
+```bash
+e-commerce-env\Scripts\activate
+```
+
+4. Install uv
 ```bash
 pip install uv
 ```
 
-3. Install dependencies
+5. Install dependencies
 ```bash
 uv sync
 ```
 
-4. Go to .env file and change all the content depending on your preference 
+6. Go to .env file and change all the content depending on your preference 
 
-5. Prevent bad code before commit to repo
+7. Prevent bad code before commit to repo
 ```bash
 pre-commit install
 pre-commit run --all-files
 ```
 
-6. Go to subfolder to run the docker-compose 
-6.1. (Optional) Before doing that, you first need to set up the permissions of two directories if you're use linux OS
+8. Go to subfolder to run the docker-compose <br>
+8.1. (Optional) Before doing that, you first need to set up the permissions of two directories if you're use linux OS
 ```bash
 cd docker-setup
 sudo chmod a+rwx <project_directory>
 ```
 
-6.2. Run the container
+8.2. Run the container
 ```bash
 docker-compose up -d
 ```
 
-6.3. Stop the container
+8.3. Stop the container
 ```bash
 docker-compose down -v
 ```
 
-7. Accessing the database from DBeaver
+9. Accessing the database from DBeaver
 <p align="center">
   <img src="asset\dbeaver-ss-connection.PNG">
 </p>
 Connection:
-- Host=localhost
-- Database=<check_PGDATABASE_in_your_.env_file>
-- Port=<check_PGPORT_in_your_.env_file>
-- Click "Show all databases" checkbox
-- Username=<check_PGUSER_in_your_.env_file>
-- Password=<check_PGPASSWORD_in_your_.env_file>
-- (Optional) Click "Save password" checkbox
-- Click "Test Connection ..." button to verify db connection
-- Click "OK" button
+- Host=localhost <br>
+- Database=<check_PGDATABASE_in_your_.env_file> <br>
+- Port=<check_PGPORT_in_your_.env_file> <br>
+- Click "Show all databases" checkbox <br>
+- Username=<check_PGUSER_in_your_.env_file> <br>
+- Password=<check_PGPASSWORD_in_your_.env_file> <br>
+- (Optional) Click "Save password" checkbox <br>
+- Click "Test Connection ..." button to verify db connection <br>
+- Click "Finish" button <br>
 
-8. Orchestrating with Airflow
-8.1. Access Airflow UI at -> http://localhost:8080
+10. Orchestrating with Airflow <br>
+10.1. Access Airflow UI at -> http://localhost:8080
 <p align="center">
   <img src="asset\airflow-main-dag.PNG">
 </p>
-8.2. Create table for raw data -> task_id: dag_create_table_oltp
+10.2. Create table for raw data -> task_id: dag_create_table_oltp
 <p align="center">
   <img src="asset\create_bronze_tables-graph-1.PNG">
 </p>
-8.3. Insert raw data -> task_id: seed_bronze_data
+10.3. Insert raw data -> task_id: seed_bronze_data
 <p align="center">
   <img src="asset\seed_bronze_data-graph-1.PNG">
 </p>
-8.4. [Staging_layer] task_id: dag_ingest_scan_dq_staging, list of flows inside the dag:
-- use dbt to materialize staging models and extraction data from raw into staging
-- use dbt test to check and validate structure (include: not null, unique, relationships)
-- use soda to check and validates data behavior (include: volume, duplicates, invalid values, data freshness)
-- use dbt with quarantine to materialize quarantine models and isolate/moves bad rows into quarantine
+10.4. [Staging_layer] task_id: dag_ingest_scan_dq_staging, list of flows inside the dag: <br>
+- use dbt to materialize staging models and extraction data from raw into staging <br>
+- use dbt test to check and validate structure (include: not null, unique, relationships) <br>
+- use soda to check and validates data behavior (include: volume, duplicates, invalid values, data freshness) <br>
+- use dbt with quarantine to materialize quarantine models and isolate/moves bad rows into quarantine <br>
 <p align="center">
   <img src="asset\extract_oltp_to_staging_with_quarantine-graph-1.PNG">
 </p>
-8.5. [core/dwh_layer] task_id: dag_modeling_transform_dq_dwh, list of flows inside the dag:
-- use dbt to materialize dimensional models and transform data from staging into dwh
-- use dbt test to check and validate structure (include: not null, unique, relationships) on dimension & fact
-- use soda to check and validates data behavior (include: volume, duplicates, invalid values, data freshness) on dimension & fact
-- use dbt with quarantine to materialize quarantine models and isolate/moves bad rows into quarantine
+<br>
+10.5. [core/dwh_layer] task_id: dag_modeling_transform_dq_dwh, list of flows inside the dag: <br>
+- use dbt to materialize dimensional models and transform data from staging into dwh <br>
+- use dbt test to check and validate structure (include: not null, unique, relationships) on dimension & fact <br>
+- use soda to check and validates data behavior (include: volume, duplicates, invalid values, data freshness) on dimension & fact <br>
+- use dbt with quarantine to materialize quarantine models and isolate/moves bad rows into quarantine <br>
 <p align="center">
   <img src="asset\dwh_dimensional_modeling-graph-1.png">
 </p>
-8.5. [Mart_layer] task_id: dag_analytics_scan_dq_mart
-- use dbt to materialize mart models and load result of aggregate data from dim & fact table
-- use dbt test to check and validate structure (include: not null, unique, relationships)
-- use soda to check and validates data behavior (include: volume, duplicates, invalid values, data freshness)
+<br>
+10.6. [Mart_layer] task_id: dag_analytics_scan_dq_mart <br>
+- use dbt to materialize mart models and load result of aggregate data from dim & fact table <br>
+- use dbt test to check and validate structure (include: not null, unique, relationships) <br>
+- use soda to check and validates data behavior (include: volume, duplicates, invalid values, data freshness) <br>
 <p align="center">
   <img src="asset\mart_analytics-graph-1.png">
 </p>
+
+### Run dbt manually
+Before run the the pipeline on Airflow UI, you can check the script work properly on docker container: <br>
+11. Initializing the dbt project
+```bash
+dbt init <dbt_project_name>
+```
+
+12. Verify that your configuration has been set up correctly
+```bash
+dbt debug
+```
+
+13. Create staging schema directly from container CLI
+```bash
+cd <dbt_project_name>\models\staging
+dbt run --select staging
+```
+
+13.1. Validates data models, sources, snapshots, and seeds
+```bash
+dbt test --select staging
+```
+
+14. Create dwh/core schema directly from container CLI
+```bash
+cd <dbt_project_name>\models\core
+dbt run --select dwh
+```
+
+14.1. Validates data models, sources, snapshots, and seeds
+```bash
+dbt test --select dwh
+```
+
+15. Create mart schema directly from container CLI
+```bash 
+cd <dbt_project_name>\models\mart
+dbt run --select mart
+```
+
+15.1. Validates data models, sources, snapshots, and seeds
+```bash
+dbt test --select mart
+```
+
+### Run soda manually
+Before run the the pipeline on Airflow UI, you can check the script work properly on docker container: <br>
+13.2. Scan data on staging phase
+```bash
+cd soda\staging
+soda scan staging -d bronze_staging -c soda_config.yml checks/staging_checks.yml
+```
+
+14.2. Scan data on dwh/core phase
+```bash
+cd soda\dwh
+soda scan staging -d dwh -c soda_config.yml dwh/dwh_checks.yml
+```
+
+15.2. Validates data models, sources, snapshots, and seeds
+```bash <data mart on finance division>
+cd soda\mart
+soda scan staging -d mart_finance -c soda_config.yml mart/mart_daily_revenue.yml
+```
 
 ## Alternative - Cloud
 (Comming Soon)
@@ -307,7 +384,15 @@ Connection:
 # Production Deployment Checklist
 
 # Data Visualization
-(In-progress)
+1. Executive KPI Dashboard
+<p align="center">
+  <img src="asset\Executive-KPI-Dashboard.png">
+</p>
+
+2. Sales Performance Dashboard
+<p align="center">
+  <img src="asset\Sales Performance Analysis.png">
+</p>
 
 # Future enhancements
 - Real-time streaming ingestion
