@@ -391,7 +391,7 @@ soda scan staging -d mart_finance -c soda_config.yml mart/mart_daily_revenue.yml
 
 2. Sales Performance Dashboard
 <p align="center">
-  <img src="asset\Sales Performance Analysis.png">
+  <img src="asset\Sales-Performance-Analysis.PNG">
 </p>
 
 # Future enhancements
